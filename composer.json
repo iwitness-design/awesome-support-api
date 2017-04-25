@@ -1,0 +1,27 @@
+{
+  "name": "tannerm/restrict-content-pro-avalara",
+  "type": "wordpress-plugin",
+  "description": "Avalara AvaTax add-on for Restrict Content Pro",
+  "keywords": [
+    "rcp",
+    "avalara",
+    "tanner",
+    "avatax"
+  ],
+  "homepage": "https://skilledcode.com/plugins/restrict-content-pro-avalara",
+  "authors": [
+    {
+      "name": "Tanner Moushey",
+      "email": "tanner@iwitnessdesign.com",
+      "homepage": "https://skilledcode.com"
+    }
+  ],
+  "require": {
+    "composer/installers": "~1.0.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "RCPAvatax\\": "includes/"
+    }
+  }
+}
