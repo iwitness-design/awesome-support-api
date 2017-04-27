@@ -1,2 +1,2 @@
-# restrict-content-pro-avalara
+# rcp-avatax
 Restrict Content Pro integration with Avalara AvaTax

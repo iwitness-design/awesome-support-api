@@ -1,5 +1,5 @@
 {
-  "name": "tannerm/restrict-content-pro-avalara",
+  "name": "tannerm/rcp-avatax",
   "type": "wordpress-plugin",
   "description": "Avalara AvaTax add-on for Restrict Content Pro",
   "keywords": [
@@ -8,7 +8,7 @@
     "tanner",
     "avatax"
   ],
-  "homepage": "https://skilledcode.com/plugins/restrict-content-pro-avalara",
+  "homepage": "https://skilledcode.com/plugins/rcp-avatax",
   "authors": [
     {
       "name": "Tanner Moushey",
@@ -16,12 +16,20 @@
       "homepage": "https://skilledcode.com"
     }
   ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/avadev/AvaTax-Calc-REST-PHP"
+    }
+  ],
   "require": {
-    "composer/installers": "~1.0.6"
+    "avalara/avatax-rest-api": "*",
+    "composer/installers": "~1.0.6",
+    "julien-c/iso3166": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "RCPAvatax\\": "includes/"
+      "RCP_Avatax\\": "includes/"
     }
   }
 }

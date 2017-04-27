@@ -1,0 +1,171 @@
+[
+    {
+        "name": "composer/installers",
+        "version": "v1.0.25",
+        "version_normalized": "1.0.25.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/composer/installers.git",
+            "reference": "36e5b5843203d7f1cf6ffb0305a97e014387bd8e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/composer/installers/zipball/36e5b5843203d7f1cf6ffb0305a97e014387bd8e",
+            "reference": "36e5b5843203d7f1cf6ffb0305a97e014387bd8e",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0"
+        },
+        "replace": {
+            "roundcube/plugin-installer": "*",
+            "shama/baton": "*"
+        },
+        "require-dev": {
+            "composer/composer": "1.0.*@dev",
+            "phpunit/phpunit": "4.1.*"
+        },
+        "time": "2016-04-13T19:46:30+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "class": "Composer\\Installers\\Plugin",
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Composer\\Installers\\": "src/Composer/Installers"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Kyle Robinson Young",
+                "email": "kyle@dontkry.com",
+                "homepage": "https://github.com/shama"
+            }
+        ],
+        "description": "A multi-framework Composer library installer",
+        "homepage": "https://composer.github.io/installers/",
+        "keywords": [
+            "Craft",
+            "Dolibarr",
+            "Hurad",
+            "ImageCMS",
+            "MODX Evo",
+            "Mautic",
+            "OXID",
+            "SMF",
+            "Thelia",
+            "WolfCMS",
+            "agl",
+            "aimeos",
+            "annotatecms",
+            "bitrix",
+            "cakephp",
+            "chef",
+            "codeigniter",
+            "concrete5",
+            "croogo",
+            "dokuwiki",
+            "drupal",
+            "elgg",
+            "fuelphp",
+            "grav",
+            "installer",
+            "joomla",
+            "kohana",
+            "laravel",
+            "lithium",
+            "magento",
+            "mako",
+            "mediawiki",
+            "modulework",
+            "moodle",
+            "phpbb",
+            "piwik",
+            "ppi",
+            "puppet",
+            "roundcube",
+            "shopware",
+            "silverstripe",
+            "symfony",
+            "typo3",
+            "wordpress",
+            "zend",
+            "zikula"
+        ]
+    },
+    {
+        "name": "avalara/avatax-rest-api",
+        "version": "14.4.4",
+        "version_normalized": "14.4.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/avadev/AvaTax-Calc-REST-PHP.git",
+            "reference": "d81ab462526068e416d4f212ef19586dabaccb70"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/avadev/AvaTax-Calc-REST-PHP/zipball/d81ab462526068e416d4f212ef19586dabaccb70",
+            "reference": "d81ab462526068e416d4f212ef19586dabaccb70",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-12-05T22:52:20+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "AvaTax": "src/"
+            }
+        },
+        "description": "A set of classes to assist with integration to the Avalara AvaTax REST API.",
+        "support": {
+            "source": "https://github.com/avadev/AvaTax-Calc-REST-PHP/tree/v14.4.4",
+            "issues": "https://github.com/avadev/AvaTax-Calc-REST-PHP/issues"
+        }
+    },
+    {
+        "name": "julien-c/iso3166",
+        "version": "2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/julien-c/iso3166.git",
+            "reference": "d7bd56333a1ed901fbc41d5a5c92d88a2a6cb88c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/julien-c/iso3166/zipball/d7bd56333a1ed901fbc41d5a5c92d88a2a6cb88c",
+            "reference": "d7bd56333a1ed901fbc41d5a5c92d88a2a6cb88c",
+            "shasum": ""
+        },
+        "time": "2015-12-15T15:40:03+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Iso3166\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Julien Chaumond",
+                "email": "chaumond@gmail.com"
+            }
+        ],
+        "description": "ISO 3166-1 alpha-2 mapping"
+    }
+]

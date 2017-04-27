@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Restrict Content Pro AvaTax
- * Plugin URL: https://skilledcode.com/plugins/restrict-content-pro-avalara
+ * Plugin Name: Restrict Content Pro - AvaTax
+ * Plugin URL: https://skilledcode.com/plugins/rcp-avatax
  * Description: Avatax add-on for Restrict Content Pro
  * Version: 0.0.1
  * Author: Tanner Moushey
@@ -26,7 +26,11 @@ if ( ! defined( 'CAL_GREGORIAN' ) ) {
 	define( 'CAL_GREGORIAN', 1 );
 }
 
-require_once( RCP_AVATAX_PLUGIN_DIR . 'vendor/autoloader.php' );
+// EDD Licensing constants
+define( 'RCP_AVATAX_STORE_URL', 'https://skilledcode.com' );
+define( 'RCP_AVATAX_ITEM_NAME', 'Restrict Content Pro - AvaTax' );
+
+require_once( RCP_AVATAX_PLUGIN_DIR . 'vendor/autoload.php' );
 
 /**
  * Load plugin text domain for translations.
@@ -75,6 +79,27 @@ function rcp_avatax_load_textdomain() {
 }
 add_action( 'init', 'rcp_avatax_load_textdomain' );
 
+function rcp_avatax() {
+	return RCP_Avatax\Init::get_instance();
+}
+
+/**
+ * Helper function to get array parameters when they might not exist
+ *
+ * @param        $array
+ * @param        $key
+ * @param string $default
+ *
+ * @return string
+ */
+function rcp_avatax_param_get( $array, $key, $default = '' ) {
+	if ( empty( $array[ $key ] ) ) {
+		return $default;
+	}
+
+	return apply_filters( 'rcp_avatax_param_get', $array[ $key ], $array, $key, $default );
+}
+
 /*******************************************
 * requirement checks
 *******************************************/
@@ -83,5 +108,5 @@ if( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 
 
 } else {
-
+	rcp_avatax();
 }
