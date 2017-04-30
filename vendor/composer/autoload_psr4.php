@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'SkilledCode\\' => array($vendorDir . '/SkilledCode'),
     'RCP_Avatax\\' => array($baseDir . '/includes'),
     'Iso3166\\' => array($vendorDir . '/julien-c/iso3166/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),

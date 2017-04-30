@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813
 {
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'SkilledCode\\' => 12,
+        ),
         'R' => 
         array (
             'RCP_Avatax\\' => 11,
@@ -22,6 +26,10 @@ class ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813
     );
 
     public static $prefixDirsPsr4 = array (
+        'SkilledCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/SkilledCode',
+        ),
         'RCP_Avatax\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes',

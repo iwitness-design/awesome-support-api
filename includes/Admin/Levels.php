@@ -52,7 +52,7 @@ class Levels {
 
 	public function meta_fields( $level = null ) {
 
-		$tax_code = ( empty( $level->id ) ) ? 0 : self::meta_get( $level->id, 'avatax-item' ); ?>
+		$tax_code = ( empty( $level->id ) ) ? 0 : rcp_avatax()::meta_get( $level->id, 'avatax-item' ); ?>
 
 		<tr class="form-field">
 			<th scope="row" valign="top">
@@ -82,27 +82,7 @@ class Levels {
 			return;
 		}
 
-		self::meta_save( $subscription_id, $_POST['rcp-avatax'] );
-	}
-
-	public static function meta_save( $subscription_id, $values ) {
-		$meta = get_option( self::$_option_key, array() );
-
-		$meta[ $subscription_id ] = apply_filters( 'rcp_avatax_tax_code_save_sanitize', $values );
-
-		update_option( self::$_option_key, $meta );
-	}
-
-	public static function meta_get( $subscription_id, $key = null ) {
-		$meta = get_option( self::$_option_key, array() );
-
-		$meta = rcp_avatax_param_get( $meta, $subscription_id, array() );
-
-		if ( $key ) {
-			$meta = rcp_avatax_param_get( $meta, $key );
-		}
-
-		return apply_filters( 'rcp_avatax_tax_code_get', $meta, $key, $subscription_id );
+		rcp_avatax()::meta_save( $subscription_id, $_POST['rcp-avatax'] );
 	}
 
 	/**
@@ -122,4 +102,12 @@ class Levels {
 		return $values;
 
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function get_option_key() {
+		return self::$_option_key;
+	}
+
 }

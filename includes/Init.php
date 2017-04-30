@@ -2,6 +2,10 @@
 
 namespace RCP_Avatax;
 
+use RCP_Avatax\AvaTax\API;
+use RCP_Avatax\Admin\Levels;
+use SkilledCode\Helpers;
+
 class Init {
 
 	/**
@@ -45,6 +49,7 @@ class Init {
 		Admin\Init::get_instance();
 
 		MemberFields::get_instance();
+		Registration::get_instance();
 	}
 
 	/**
@@ -114,6 +119,8 @@ class Init {
 		</tr><?php
 	}
 
+	/** Helper Methods **************************************/
+
 	/**
 	 * @param $key
 	 *
@@ -131,6 +138,131 @@ class Init {
 		}
 
 		return apply_filters( 'rcp_avatax_get_setting', $settings[ $key ], $key );
+	}
+
+	/**
+	 * Get the endpoint to use for AvaTax requests
+	 *
+	 * @return string
+	 */
+	public static function get_service_url() {
+		return 'https://development.avalara.net';
+	}
+
+	/**
+	 * Gets the plugin documentation URL
+	 *
+	 * @since 1.0.0
+	 * @return string
+	 */
+	public function get_documentation_url() {
+		return '';
+	}
+
+	/**
+	 * Gets the plugin support URL
+	 *
+	 * @since 1.0.0
+	 * @return string
+	 */
+	public function get_support_url() {
+
+		return '';
+	}
+
+	/**
+	 * Returns the plugin name, localized
+	 *
+	 * @since 1.0.0
+	 * @return string the plugin name
+	 */
+	public function get_plugin_name() {
+		return __( 'RCP AvaTax', 'rcp-avatax' );
+	}
+
+	public function get_id() {
+		return 'rcp-avatax';
+	}
+
+	/**
+	 * Returns __FILE__
+	 *
+	 * @since 1.0.0
+	 * @return string the full path and filename of the plugin file
+	 */
+	protected function get_file() {
+		return RCP_AVATAX_PLUGIN_FILE;
+	}
+
+	/**
+	 * Returns the current version of the plugin
+	 *
+	 * @since 1.0.0
+	 * @return string plugin version
+	 */
+	public function get_version() {
+		return RCP_AVATAX_PLUGIN_VERSION;
+	}
+
+	/** Subscription Meta Helpers ********************/
+
+	/**
+	 * Save subscription meta
+	 *
+	 * @param $subscription_id
+	 * @param $values
+	 */
+	public static function meta_save( $subscription_id, $values ) {
+		$meta = get_option( Levels::get_option_key(), array() );
+
+		$meta[ $subscription_id ] = apply_filters( 'rcp_avatax_tax_code_save_sanitize', $values );
+
+		update_option( Levels::get_option_key(), $meta );
+	}
+
+	/**
+	 * Get subscription meta
+	 *
+	 * @param      $subscription_id
+	 * @param null $key
+	 *
+	 * @return mixed|void
+	 */
+	public static function meta_get( $subscription_id, $key = null ) {
+		$meta = get_option( Levels::get_option_key(), array() );
+
+		$meta = Helpers::get_param( $meta, $subscription_id, array() );
+
+		if ( $key ) {
+			$meta = Helpers::get_param( $meta, $key );
+		}
+
+		return apply_filters( 'rcp_avatax_tax_code_get', $meta, $key, $subscription_id );
+	}
+
+	/** API Helpers ********************/
+
+	/**
+	 * Return new API request
+	 *
+	 * @return API
+	 */
+	public static function new_request() {
+		$account_number = self::get_settings( 'avatax_account_number' );
+		$license_key    = self::get_settings( 'avatax_license_key' );
+		$environment    = 'sandbox';
+
+		return new API( $account_number, $license_key, $environment );
+	}
+
+	/**
+	 * Calculate registration tax
+	 *
+	 * @return object
+	 */
+	public static function calculate_registration_tax() {
+		$request = self::new_request();
+		return $request->calculate_registration_tax();
 	}
 
 }

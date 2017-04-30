@@ -29,7 +29,8 @@
   },
   "autoload": {
     "psr-4": {
-      "RCP_Avatax\\": "includes/"
+      "RCP_Avatax\\": "includes/",
+      "SkilledCode\\": "vendor/SkilledCode/"
     }
   }
 }
