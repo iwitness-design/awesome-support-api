@@ -6,5 +6,4 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'AvaTax' => array($vendorDir . '/avalara/avatax-rest-api/src'),
 );

@@ -7,50 +7,16 @@ namespace Composer\Autoload;
 class ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813
 {
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'W' => 
         array (
-            'SkilledCode\\' => 12,
-        ),
-        'R' => 
-        array (
-            'RCP_Avatax\\' => 11,
-        ),
-        'I' => 
-        array (
-            'Iso3166\\' => 8,
-        ),
-        'C' => 
-        array (
-            'Composer\\Installers\\' => 20,
+            'WPAS_API\\' => 9,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'SkilledCode\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/SkilledCode',
-        ),
-        'RCP_Avatax\\' => 
+        'WPAS_API\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes',
-        ),
-        'Iso3166\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/julien-c/iso3166/src',
-        ),
-        'Composer\\Installers\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'A' => 
-        array (
-            'AvaTax' => 
-            array (
-                0 => __DIR__ . '/..' . '/avalara/avatax-rest-api/src',
-            ),
         ),
     );
 
@@ -59,7 +25,6 @@ class ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit7c8fa0f01f389f87781c2f5a8ead4813::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

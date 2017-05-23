@@ -1,10 +1,6 @@
 <?php
 
-namespace RCP_Avatax;
-
-use RCP_Avatax\AvaTax\API;
-use RCP_Avatax\Admin\Levels;
-use SkilledCode\Helpers;
+namespace WPAS_API;
 
 class Init {
 
@@ -45,12 +41,7 @@ class Init {
 		add_action( 'rcp_view_member_after', array( $this, 'member_details' ) );
 	}
 
-	protected function includes() {
-		Admin\Init::get_instance();
-
-		MemberFields::get_instance();
-		Registration::get_instance();
-	}
+	protected function includes() {}
 
 	/**
 	 * Make sure RCP is active

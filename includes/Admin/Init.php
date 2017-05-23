@@ -1,6 +1,6 @@
 <?php
 
-namespace RCP_Avatax\Admin;
+namespace WPAS_API\Admin;
 
 class Init {
 
@@ -27,9 +27,7 @@ class Init {
 	}
 
 	protected function includes() {
-		License::get_instance();
 		Settings::get_instance();
-		Levels::get_instance();
 	}
 
 }

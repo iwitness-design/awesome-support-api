@@ -1,9 +1,9 @@
 {
-  "name": "rcp-avatax",
-  "version": "0.0.1",
-  "description": "Avalara AvaTax add-on for Restrict Content Pro.",
-  "homepage": "https://skilledcode.com/plugins/rcp-avatax/",
-  "author": "Tanner Moushey <support@iwitnessdesign.com> (https://skilledcode.com/)",
+  "name": "awesome-support-api",
+  "version": "1.0.0",
+  "description": "API add-on for Awesome Support.",
+  "homepage": "https://getawesomesupport.com/addons/api/",
+  "author": "Tanner Moushey <support@iwitnessdesign.com>",
   "contributors": "Tanner Moushey",
   "repository": {
     "type": "git",
