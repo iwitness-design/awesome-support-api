@@ -1,0 +1,130 @@
+FORMAT: 1A
+HOST: http://[your-site-url]/wp-json/wpas-api/v1
+
+# Awesome Support API
+
+The Awesome Support API allows for interaction with the Awesome Support plugin through a REST API.
+
+## Tickets [/tickets{?status,state}]
+
+### List All Tickets [GET]
+
++ Parameters
+    + status: `any` (optional, String | Array) - Limit result set to tickets assigned one or more statuses.
+        + Default: `any`
+        + Members
+            + queued
+            + processing
+            + hold
+            + read
+            + unread
+            + any
+    
+    + state: `open` (optional, string) - The Ticket state to retrieve
+        + Default: `open`
+        + Members
+            + open
+            + closed
+            + any
+
++ Response 200 (application/json)
+
+[
+{
+"id": 9,
+"date": "2017-05-23T04:34:51",
+"date_gmt": "2017-05-23T04:34:51",
+"guid": {
+"rendered": "http://awesomesupport.dev/?post_type=ticket&#038;p=9"
+},
+"modified": "2017-05-23T04:37:27",
+"modified_gmt": "2017-05-23T04:37:27",
+"slug": "new-ticket",
+"status": "processing",
+"type": "ticket",
+"link": "http://awesomesupport.dev/ticket/new-ticket/",
+"title": {
+"rendered": "New Ticket"
+},
+"content": {
+"rendered": "",
+"protected": false
+},
+"template": "",
+"_links": {
+"self": [
+{
+"href": "http://awesomesupport.dev/wp-json/wpas-api/v1/tickets/9"
+}
+],
+"collection": [
+{
+"href": "http://awesomesupport.dev/wp-json/wpas-api/v1/tickets"
+}
+],
+"about": [
+{
+"href": "http://awesomesupport.dev/wp-json/wp/v2/types/ticket"
+}
+],
+"wp:attachment": [
+{
+"href": "http://awesomesupport.dev/wp-json/wp/v2/media?parent=9"
+}
+],
+"curies": [
+{
+"name": "wp",
+"href": "https://api.w.org/{rel}",
+"templated": true
+}
+]
+}
+}
+]
+
+### Create a Ticket [POST]
+
+You may create your own question using this action. It takes a JSON
+object containing a question and a collection of answers in the
+form of choices.
+
++ Request Create a Ticket (application/json)
+
+        {
+            "question": "Favourite programming language?",
+            "choices": [
+                "Swift",
+                "Python",
+                "Objective-C",
+                "Ruby"
+            ]
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /questions/2
+
+    + Body
+
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 0
+                    }, {
+                        "choice": "Python",
+                        "votes": 0
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 0
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 0
+                    }
+                ]
+            }
