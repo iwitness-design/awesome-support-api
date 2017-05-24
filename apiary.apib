@@ -9,6 +9,7 @@ The Awesome Support API allows for interaction with the Awesome Support plugin t
 
 ### List All Tickets [GET]
 
+
 + Parameters
 
     + page: `1` (optional, integer) - Current page of the collection.
@@ -65,6 +66,7 @@ The Awesome Support API allows for interaction with the Awesome Support plugin t
             + `closed`
             + `any`
 
+        
 + Response 200 (application/json)
 
         [
@@ -123,8 +125,8 @@ The Awesome Support API allows for interaction with the Awesome Support plugin t
 
 ### Create a Ticket [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
+You may create your own ticket using this action. It takes a JSON
+object containing a ticket and a collection of answers in the
 form of choices.
 
 + Request Create a Ticket (application/json)
