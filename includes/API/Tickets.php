@@ -2,17 +2,11 @@
 
 namespace WPAS_API\API;
 
+use WPAS_API\API\TicketBase;
 use WP_REST_Posts_Controller;
 use WP_Error;
 
-class Tickets extends WP_REST_Posts_Controller {
-
-
-	public function __construct( $post_type ) {
-		parent::__construct( $post_type );
-
-		$this->namespace = wpas_api()->get_api_namespace();
-	}
+class Tickets extends TicketBase {
 
 	/**
 	 * Determines the allowed query_vars for a get_items() response and prepares
@@ -71,9 +65,23 @@ class Tickets extends WP_REST_Posts_Controller {
 			);
 		}
 
+		// set assignee
+		if ( ! empty( $request['assignee'] ) ) {
+			$meta_query[] = array(
+				'key'     => '_wpas_assignee',
+				'value'   => absint( $request['assignee'] ),
+				'compare' => '=',
+				'type'    => 'NUMERIC',
+			);
+		}
+
+		if ( ! isset( $meta_query['relation'] ) ) {
+			$meta_query['relation'] = 'AND';
+		}
+
 		$query_args['meta_query'] = $meta_query;
 
-		return apply_filters( 'wpas_api_tickets_prepare_item_query', $query_args, $prepared_args, $request, $this );
+		return apply_filters( "wpas_api_{$this->rest_base}_prepare_items_query", $query_args, $prepared_args, $request, $this );
 	}
 
 	/**
@@ -86,17 +94,24 @@ class Tickets extends WP_REST_Posts_Controller {
 	 */
 	public function get_collection_params() {
 		$query_params = parent::get_collection_params();
+		$user         = wp_get_current_user();
 
-		$query_params['status'] = array(
-			'default'           => 'any',
-			'description'       => __( 'Limit result set to tickets assigned one or more statuses.', 'awesome-support-api' ),
-			'type'              => 'array',
-			'items'             => array(
-				'enum'          => array_merge( array_keys( wpas_get_post_status() ), array( 'read', 'unread', 'any' ) ),
-				'type'          => 'string',
-			),
-			'sanitize_callback' => array( $this, 'sanitize_ticket_param' ),
+		// set the default assignee to the current user, if the current user is an agent
+		$query_params['assignee'] = array(
+			'default'           => 0,
+			'description'       => __( 'Limit result set to tickets assigned to this user id.' ),
+			'type'              => 'integer',
 		);
+
+		// if the user is logged in then set the assignee to the user ID if the user is an agent
+		// if the user is not an agent then set the default author to the user ID to show the user's tickets
+		if ( $user->has_cap( 'edit_ticket' ) ) {
+			$query_params['assignee']['default'] = $user->ID;
+		} elseif ( $user->ID ) {
+			$query_params['author']['default'] = $user->ID;
+		}
+
+		$query_params['status']['items']['enum'] = array_merge( array_keys( wpas_get_post_status() ), array( 'read', 'unread', 'any' ) );
 
 		$query_params['state'] = array(
 			'default'           => 'open',
@@ -141,36 +156,81 @@ class Tickets extends WP_REST_Posts_Controller {
 		 * @param array   $query_params JSON Schema-formatted collection parameters.
 		 * @param object  Tickets
 		 */
-		return apply_filters( "wpas_api_tickets_collection_params", $query_params, $this );
+		return apply_filters( "wpas_api_{$this->rest_base}_get_collection_params", $query_params, $this );
 	}
 
 	/**
-	 * Sanitizes and validates a list of arguments against the provided attributes.
+	 * Prepares links for the request.
 	 *
-	 * @param  string|array    $statuses  One or more post statuses.
-	 * @param  \WP_REST_Request $request   Full details about the request.
-	 * @param  string          $parameter Additional parameter to pass to validation.
-	 * @return array|WP_Error A list of valid statuses, otherwise WP_Error object.
+	 * @param \WP_Post $post Post object.
+	 * @return array Links for the given post.
 	 */
-	public function sanitize_ticket_param( $statuses, $request, $parameter ) {
-		$items = wp_parse_slug_list( $statuses );
+	protected function prepare_links( $post ) {
+		$history         = get_post_type_object( 'ticket_history' );
+		$replies         = get_post_type_object( 'ticket_reply' );
+		$base            = sprintf( '%s/%s', $this->namespace, $this->rest_base );
+		$attachments_url = rest_url( 'wp/v2/media' );
+		$attachments_url = add_query_arg( 'parent', $post->ID, $attachments_url );
 
-		// The default status is different in WP_REST_Attachments_Controller
-		$attributes = $request->get_attributes();
-		$default    = isset( $attributes['args'][ $parameter ]['default'] ) ? $attributes['args'][ $parameter ]['default'] : '' ;
+		// Entity meta.
+		$links = array(
+			'self'                         => array(
+				'href' => rest_url( trailingslashit( $base ) . $post->ID ),
+			),
+			'collection'                   => array(
+				'href' => rest_url( $base ),
+			),
+			'replies'                      => array(
+				'href'       => rest_url( trailingslashit( $base ) . $post->ID . '/' . $replies->rest_base ),
+				'embeddable' => true,
+			),
+			'history'                      => array(
+				'href'       => rest_url( trailingslashit( $base ) . $post->ID . '/' . $history->rest_base ),
+				'embeddable' => true,
+			),
+			'author'                       => array(
+				'href'       => rest_url( 'wp/v2/users/' . $post->post_author ),
+				'embeddable' => true,
+			),
+			'https://api.w.org/attachment' => array(
+				'href'       => $attachments_url,
+				'embeddable' => true,
+			),
+			'about'                        => array(
+				'href' => rest_url( 'wp/v2/types/' . $this->post_type ),
+			),
+		);
 
-		foreach ( $items as $item ) {
-			if ( $item === $default ) {
-				continue;
-			}
+		$taxonomies = get_object_taxonomies( $post->post_type );
 
-			$result = rest_validate_request_arg( $item, $request, $parameter );
-			if ( is_wp_error( $result ) ) {
-				return $result;
+		if ( ! empty( $taxonomies ) ) {
+			$links['https://api.w.org/term'] = array();
+
+			foreach ( $taxonomies as $tax ) {
+				$taxonomy_obj = get_taxonomy( $tax );
+
+				// Skip taxonomies that are not public.
+				if ( empty( $taxonomy_obj->show_in_rest ) ) {
+					continue;
+				}
+
+				$tax_base = ! empty( $taxonomy_obj->rest_base ) ? $taxonomy_obj->rest_base : $tax;
+
+				$terms_url = add_query_arg(
+					'post',
+					$post->ID,
+					rest_url( 'wp/v2/' . $tax_base )
+				);
+
+				$links['https://api.w.org/term'][] = array(
+					'href'       => $terms_url,
+					'taxonomy'   => $tax,
+					'embeddable' => true,
+				);
 			}
 		}
 
-		return $items;
+		return apply_filters( "wpas_api_{$this->rest_base}_prepare_links", $links, $post, $this );
 	}
 
 }

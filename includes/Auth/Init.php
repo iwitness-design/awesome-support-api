@@ -2,6 +2,8 @@
 
 namespace WPAS_API\Auth;
 
+use WPAS_API\API\Passwords;
+
 use WP_REST_Server;
 use WP_User;
 use WPAS_API\Auth\User;
@@ -78,6 +80,11 @@ class Init {
 	 * Handle declaration of REST API endpoints.
 	 */
 	public static function rest_api_init() {
+		$controller = new Passwords();
+		$controller->register_routes();
+
+		return;
+
 		// List existing application passwords
 		register_rest_route( wpas_api()->get_api_namespace(), '/passwords/(?P<user_id>[\d]+)', array(
 			'methods' => WP_REST_Server::READABLE,
@@ -87,14 +94,16 @@ class Init {
 
 		// Add new application passwords
 		register_rest_route( wpas_api()->get_api_namespace(), '/passwords/(?P<user_id>[\d]+)/add', array(
-			'methods' => WP_REST_Server::CREATABLE,
-			'callback' => __CLASS__ . '::rest_add_api_password',
-			'permission_callback' => __CLASS__ . '::rest_edit_user_callback',
-			'args' => array(
-				'name' => array(
-					'required' => true,
+//			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => __CLASS__ . '::rest_add_api_password',
+				'permission_callback' => __CLASS__ . '::rest_edit_user_callback',
+				'args'                => array(
+					'name' => array(
+						'required' => true,
+					),
 				),
-			),
+//			),
 		) );
 
 		// Delete an application password
@@ -132,8 +141,8 @@ class Init {
 		$with_slugs = array();
 
 		if ( $api_passwords ) {
-			foreach ( $api_passwords as $item ) {
-				$item['slug'] = User::password_unique_slug( $item );
+			foreach ( $api_passwords as $slug => $item ) {
+				$item['slug'] = $slug;
 				unset( $item['raw'] );
 				unset( $item['password'] );
 
@@ -161,11 +170,15 @@ class Init {
 	 *
 	 * @param $data
 	 *
-	 * @return array
+	 * @return array | WP_Error
 	 */
 	public static function rest_add_api_password( $data ) {
 
 		$user = new User( $data['user_id'] );
+
+		if ( empty( $data['name'] ) ) {
+			return new WP_Error( 'no-name', __( 'Please provide a name to use for the new password.', 'awesome-support-api' ), array( 'status' => 404 ) );
+		}
 
 		list( $new_password, $new_item ) = $user->create_new_api_password( $data['name'] );
 
@@ -235,6 +248,7 @@ class Init {
 			return $input_user;
 		}
 
+		// limit this authentication to these api route
 		global $wp;
 		$route = isset( $wp->query_vars['rest_route'] ) ? $wp->query_vars['rest_route'] : '';
 
@@ -400,6 +414,46 @@ class Init {
 			<div class="notice notice-{{ data.type }}"><p>{{{ data.message }}}</p></div>
 		</script>
 		<?php
+	}
+
+	public static function get_password_schema() {
+		$schema = array(
+			'name'      => array(
+				'description' => __( "The name of the new password" ),
+				'type'        => 'string',
+				'context'     => array( 'view', 'edit', 'embed' ),
+			),
+			'password'  => array(
+				'description' => __( "The hashed password that was created" ),
+				'type'        => 'string',
+				'format'      => 'date-time',
+				'context'     => array( 'edit' ),
+			),
+			'created'   => array(
+				'description' => __( 'The date the password was created' ),
+				'type'        => 'string',
+				'format'      => 'date-time',
+				'context'     => array( 'view', 'edit' ),
+			),
+			'last_used' => array(
+				'description' => __( 'The date the password was last used' ),
+				'type'        => 'string',
+				'format'      => 'date-time',
+				'context'     => array( 'view', 'edit' ),
+			),
+			'last_ip'   => array(
+				'description' => __( 'The IP address that the password was last used from' ),
+				'type'        => 'string',
+				'context'     => array( 'view', 'edit' ),
+			),
+			'slug'      => array(
+				'description' => __( 'The password\'s unique sluge' ),
+				'type'        => 'string',
+				'context'     => array( 'view', 'edit' ),
+			),
+		);
+
+		return apply_filters( 'wpas_api_get_password_schema', $schema );
 	}
 
 }

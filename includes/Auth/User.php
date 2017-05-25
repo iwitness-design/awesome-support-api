@@ -25,6 +25,20 @@ class User extends \WP_User {
 	/**
 	 * Get a users application passwords.
 	 *
+	 * @param string $slug
+	 * @return array
+	 */
+	public function get_api_password( $slug ) {
+		$passwords = $this->get_api_passwords();
+
+		$password = isset( $passwords[ $slug ] ) ? $passwords[ $slug ] : false;
+
+		return apply_filters( 'wpas_get_api_password', $password, $slug, $this );
+	}
+
+	/**
+	 * Get a users application passwords.
+	 *
 	 * @return array
 	 */
 	public function get_api_passwords() {
@@ -71,10 +85,15 @@ class User extends \WP_User {
 			$passwords = array();
 		}
 
-		$passwords[] = $new_item;
+		$slug = self::password_unique_slug( $new_item );
+		$passwords[ $slug ] = $new_item;
 		$this->set_api_passwords( $passwords );
 
-		return array( $new_password, $new_item );
+		// set the password to be the new plain text password and define the slug
+		$new_item['password'] = self::chunk_password( $new_password );
+		$new_item['slug']     = $slug;
+
+		return apply_filters( 'wpas_api_create_new_api_password', $new_item, $name, $this );
 	}
 
 	/**
@@ -87,7 +106,7 @@ class User extends \WP_User {
 		$passwords = $this->get_api_passwords();
 
 		foreach ( $passwords as $key => $item ) {
-			if ( self::password_unique_slug( $item ) === $slug ) {
+			if ( $slug === $key || self::password_unique_slug( $item ) === $slug ) {
 				unset( $passwords[ $key ] );
 				$this->set_api_passwords( $passwords );
 				return true;
@@ -152,7 +171,11 @@ class User extends \WP_User {
 			}
 		}
 
-		return apply_filters( 'wpas_user_authenticate', $authenticated, $password, $this );
+		if ( ! $authenticated && apply_filters( 'wpas_api_allow_password_authentication', true ) ) {
+			$authenticated = wp_check_password( $password, $this->user_pass, $this->ID );
+		}
+
+		return apply_filters( 'wpas_api_user_authenticate', $authenticated, $password, $this );
 	}
 
 	/**

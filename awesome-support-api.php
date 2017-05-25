@@ -144,6 +144,19 @@ class WPAS_API {
 				$args['rest_base'] = 'tickets';
 				$args['rest_controller_class'] = 'WPAS_API\API\Tickets';
 				break;
+
+			case 'ticket_reply' :
+				$args['show_in_rest'] = true;
+				$args['rest_base'] = 'replies';
+				$args['rest_controller_class'] = 'WPAS_API\API\TicketReplies';
+				break;
+
+			case 'ticket_history' :
+				$args['show_in_rest'] = true;
+				$args['rest_base'] = 'history';
+				$args['rest_controller_class'] = 'WPAS_API\API\TicketHistory';
+				break;
+
 		}
 		return $args;
 	}

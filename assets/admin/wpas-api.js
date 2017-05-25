@@ -52,7 +52,7 @@
 		$newAppPassButton.prop( 'disabled', true );
 
 		$.ajax( {
-			url:        wpasAPI.root + wpasAPI.namespace + '/passwords/' + wpasAPI.user_id + '/add',
+			url:        wpasAPI.root + wpasAPI.namespace + '/passwords/' + wpasAPI.user_id,
 			method:     'POST',
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpasAPI.nonce );
@@ -69,7 +69,9 @@
 				password: response.password
 			} ) );
 
-			$appPassTbody.prepend( tmplAppPassRow( response.row ) );
+			delete response.password;
+
+			$appPassTbody.prepend( tmplAppPassRow( response ) );
 
 			$appPassTwrapper.show();
 			$appPassTrNoItems.remove();
@@ -88,7 +90,7 @@
 				xhr.setRequestHeader( 'X-WP-Nonce', wpasAPI.nonce );
 			}
 		} ).done( function ( response ) {
-			if ( response ) {
+			if ( response.deleted ) {
 				if ( 0 === $tr.siblings().length ) {
 					$appPassTwrapper.hide();
 				}
@@ -107,7 +109,7 @@
 				xhr.setRequestHeader( 'X-WP-Nonce', wpasAPI.nonce );
 			}
 		} ).done( function( response ) {
-			if ( parseInt( response, 10 ) > 0 ) {
+			if ( response.deleted ) {
 				$appPassTbody.children().remove();
 				$appPassSection.children( '.new-wpas-api-password' ).remove();
 				$appPassTwrapper.hide();
