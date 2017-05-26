@@ -42,8 +42,9 @@ class Passwords extends WP_REST_Controller {
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<user_id>[\d]+)', array(
 			'args' => array(
 				'user_id' => array(
-					'description' => __( 'The ID of the user to update.', 'awesome-support-api' ),
+					'description' => __( 'The ID of the requested user.', 'awesome-support-api' ),
 					'type'        => 'integer',
+					'required'    => true,
 				),
 			),
 			array(
@@ -68,12 +69,14 @@ class Passwords extends WP_REST_Controller {
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<user_id>[\d]+)/(?P<slug>[\da-fA-F]{12})', array(
 			'args' => array(
 				'user_id' => array(
-					'description' => __( 'The ID of the user to update.', 'awesome-support-api' ),
+					'description' => __( 'The ID of the requested user.', 'awesome-support-api' ),
 					'type'        => 'integer',
+					'required'    => true,
 				),
 				'slug' => array(
 					'description' => __( 'The slug of the password to delete.', 'awesome-support-api' ),
 					'type'        => 'string',
+					'required'    => true,
 				),
 			),
 			array(
