@@ -79,7 +79,9 @@ class WPAS_API {
 	 * Handle Filters
 	 */
 	protected function filters() {
-		add_filter( 'register_post_type_args', array( $this, 'enable_rest_api' ), 10, 2 );
+		add_filter( 'register_post_type_args', array( $this, 'enable_rest_api_cpt' ), 10, 2 );
+		add_filter( 'register_taxonomy_args',  array( $this, 'enable_rest_api_tax' ), 10, 3 );
+		add_filter( 'rest_prepare_taxonomy',   array( $this, 'taxonomy_rest_response' ), 10, 3 );
 	}
 
 	/** Actions ******************************************************/
@@ -136,7 +138,7 @@ class WPAS_API {
 	 *
 	 * @return array $args
 	 */
-	public function enable_rest_api( $args, $post_type ) {
+	public function enable_rest_api_cpt( $args, $post_type ) {
 
 		switch( $post_type ) {
 			case 'ticket' :
@@ -159,6 +161,43 @@ class WPAS_API {
 
 		}
 		return $args;
+	}
+
+	/**
+	 * @param array  $args      Array of arguments for registering a post type.
+	 * @param string $post_type Post type key.
+	 *
+	 * @return array $args
+	 */
+	public function enable_rest_api_tax( $args, $taxonomy, $post_type ) {
+
+		if ( in_array( 'ticket', (array) $post_type ) ) {
+			$args['show_in_rest'] = true;
+			$args['rest_base'] = str_replace( '_', '-', $taxonomy );
+			$args['rest_controller_class'] = 'WPAS_API\API\TicketTaxonomy';
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Filter the response and update the term page to user the correct namespace.
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param object           $taxonomy     The original taxonomy object.
+	 * @param WP_REST_Request  $request  Request used to generate the response.
+	 *
+	 * @return WP_REST_Response $response
+	 */
+	public function taxonomy_rest_response( $response, $taxonomy, $request ) {
+		$base = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
+
+		if ( in_array( 'ticket', $taxonomy->object_type ) ) {
+			$response->remove_link( 'https://api.w.org/items' );
+			$response->add_link( 'https://api.w.org/items', rest_url( wpas_api()->get_api_namespace() . '/' . $base ) );
+		}
+
+		return $response;
 	}
 
 	/** Helper methods ******************************************************/
